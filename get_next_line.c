@@ -6,7 +6,7 @@
 /*   By: ycharhil <ycharhil@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/20 17:48:53 by ycharhil          #+#    #+#             */
-/*   Updated: 2025/01/30 13:10:27 by ycharhil         ###   ########.fr       */
+/*   Updated: 2025/02/19 16:33:41 by ycharhil         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,6 +23,8 @@ char	*get_next_line(int fd)
 	char		*buffer;
 
 	buffer = (char *)malloc((BUFFER_SIZE + 1) * sizeof(char));
+	if (!buffer)
+		return (NULL);
 	if (fd < 0 || BUFFER_SIZE <= 0 || read(fd, 0, 0) < 0)
 	{
 		free(left_c);
@@ -31,8 +33,6 @@ char	*get_next_line(int fd)
 		buffer = NULL;
 		return (NULL);
 	}
-	if (!buffer)
-		return (NULL);
 	line = _fill_line_buffer(fd, left_c, buffer);
 	free(buffer);
 	buffer = NULL;
@@ -53,6 +53,8 @@ static char	*_set_line(char *line_buffer)
 	if (line_buffer[i] == 0 || line_buffer[1] == 0)
 		return (NULL);
 	left_c = ft_substr(line_buffer, i + 1, ft_strlen(line_buffer) - i);
+	if (!left_c)
+		return (NULL);
 	if (*left_c == 0)
 	{
 		free(left_c);
@@ -72,15 +74,14 @@ static char	*_fill_line_buffer(int fd, char *left_c, char *buffer)
 	{
 		b_read = read(fd, buffer, BUFFER_SIZE);
 		if (b_read == -1)
-		{
-			free(left_c);
-			return (NULL);
-		}
+			return (free(left_c), NULL);
 		else if (b_read == 0)
 			break ;
 		buffer[b_read] = 0;
 		if (!left_c)
 			left_c = ft_strdup("");
+		if (left_c == NULL)
+			return (NULL);
 		tmp = left_c;
 		left_c = ft_strjoin(tmp, buffer);
 		free(tmp);
